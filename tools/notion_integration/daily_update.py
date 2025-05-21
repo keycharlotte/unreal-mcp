@@ -35,33 +35,49 @@ class NotionDailyUpdate:
 
     def update_task_status(self, task_id, status):
         """更新任务状态"""
-        self.notion.pages.update(
-            page_id=task_id,
-            properties={
-                "Status": {"select": {"name": status}}
-            }
-        )
+        print(f"正在更新任务 {task_id} 状态为: {status}")
+        try:
+            self.notion.pages.update(
+                page_id=task_id,
+                properties={
+                    "Status": {"select": {"name": status}}
+                }
+            )
+            print(f"成功更新任务状态: {task_id}")
+        except Exception as e:
+            print(f"更新任务状态时出错: {str(e)}")
+            raise
 
 def mark_completed_tasks(updater, task_titles):
     """标记指定标题的任务为已完成"""
+    print(f"开始标记已完成的任务: {task_titles}")
     for title in task_titles:
-        # 查找任务
-        response = updater.notion.databases.query(
-            **{
-                "database_id": updater.database_id,
-                "filter": {
-                    "property": "Name",
-                    "title": {
-                        "equals": title
+        print(f"\n处理任务: {title}")
+        try:
+            # 查找任务
+            response = updater.notion.databases.query(
+                **{
+                    "database_id": updater.database_id,
+                    "filter": {
+                        "and": [
+                            {"property": "Name", "title": {"equals": title}},
+                            {"property": "Status", "select": {"does_not_equal": "Done"}}
+                        ]
                     }
                 }
-            }
-        )
-        
-        # 更新找到的任务
-        for task in response.get('results', []):
-            print(f"标记任务为已完成: {title}")
-            updater.update_task_status(task['id'], "Done")
+            )
+            
+            tasks = response.get('results', [])
+            print(f"找到 {len(tasks)} 个匹配的任务")
+            
+            # 更新找到的任务
+            for task in tasks:
+                task_id = task['id']
+                print(f"标记任务为已完成 - 标题: {title}, ID: {task_id}")
+                updater.update_task_status(task_id, "Done")
+        except Exception as e:
+            print(f"处理任务 '{title}' 时出错: {str(e)}")
+            continue
 
 def main():
     try:
