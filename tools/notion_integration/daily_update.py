@@ -42,10 +42,41 @@ class NotionDailyUpdate:
             }
         )
 
+def mark_completed_tasks(updater, task_titles):
+    """标记指定标题的任务为已完成"""
+    for title in task_titles:
+        # 查找任务
+        response = updater.notion.databases.query(
+            **{
+                "database_id": updater.database_id,
+                "filter": {
+                    "property": "Name",
+                    "title": {
+                        "equals": title
+                    }
+                }
+            }
+        )
+        
+        # 更新找到的任务
+        for task in response.get('results', []):
+            print(f"标记任务为已完成: {title}")
+            updater.update_task_status(task['id'], "Done")
+
 def main():
     try:
         print("开始每日任务更新...")
         updater = NotionDailyUpdate()
+        
+        # 5月21日已完成的任务
+        completed_tasks = [
+            "项目初始化",
+            "创建玩家角色",
+            "实现基础移动控制"
+        ]
+        
+        # 标记已完成的任务
+        mark_completed_tasks(updater, completed_tasks)
         
         # 获取今天的任务
         tasks = updater.get_today_tasks()
