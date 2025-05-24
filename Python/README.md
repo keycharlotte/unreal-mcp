@@ -18,7 +18,7 @@ Python bridge for interacting with Unreal Engine 5.5 using the Model Context Pro
    ```
 4. Install dependencies:
    ```bash
-   uv pip install -e .
+   uv pip install -e 
    ```
 
 At this point, you can configure your MCP Client (Claude Desktop, Cursor, Windsurf) to use the Unreal MCP Server as per the [Configuring your MCP Client](README.md#configuring-your-mcp-client).

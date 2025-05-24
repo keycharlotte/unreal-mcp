@@ -1,0 +1,12 @@
+1. 创建以下蓝图数据结构：
+   - BP_EnemyData (结构体)
+     - 包含：生命值、伤害、移动速度等基础属性
+     - 特殊能力标记（护盾、狂暴等）
+   
+   - BP_CardData (结构体) 
+     - 包含：技能名称、能量消耗、冷却时间
+     - 效果参数（伤害系数、治疗量等）
+
+2. 创建数据表格(DataTable)：
+   - DT_EnemyStats (使用BP_EnemyData结构)
+   - DT_CardLibrary (使用BP_CardData结构)
